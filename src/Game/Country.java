@@ -1,8 +1,8 @@
 package Game;
 
 /*
-Team Name: table_1
-Student Numbers: 14480278, 14461158, 14745991
+Team Name: nullptr
+Student Numbers: 14745991
 
 The class that stores Country information
 */
@@ -15,15 +15,26 @@ import java.util.ArrayList;
 import GUI.MapConstants;
 
 public class Country {
-	public Country(Integer arrayindex, ArrayList<Country> othercountries, Dimension panel_size){
-		this.panel_size = panel_size;
+	private Dimension panel_size;
+	private int id;
+	private String name;
+	private Integer[] coords;
+	private Integer radius;
+	private ArrayList<Country> adjacent;
+	private ArrayList<Country> othercountries;
+	private Continent continent;
+	private Color color;
+	private Font font;
+	private GameMechanics gamemechanics;
+	public Country(Integer arrayindex, GameMechanics gamemechanics){
+		this.gamemechanics = gamemechanics;
+		this.panel_size = gamemechanics.getOutput().getPanelSize();
 		id = arrayindex;
 		radius = (int)(20*MapConstants.SCALING_CONSTANT);
 		this.name = MapConstants.COUNTRY_NAMES[arrayindex];
 		this.setCoords(arrayindex);
-		this.othercountries = othercountries;
-		continentid = MapConstants.CONTINENT_IDS[arrayindex];
-		continentname = MapConstants.CONTINENT_NAMES[continentid];
+		this.othercountries = gamemechanics.getCountryList();
+		continent = gamemechanics.getContinentList().get(MapConstants.CONTINENT_IDS[arrayindex]);
 		this.setColor();
 		this.setFont();
 	}	
@@ -57,9 +68,9 @@ public class Country {
 		return adjacent;
 	}	
 	private	void setColor(){
-		Integer R = MapConstants.CONT_COLORS[continentid][0];
-		Integer G = MapConstants.CONT_COLORS[continentid][1];
-		Integer B = MapConstants.CONT_COLORS[continentid][2];
+		Integer R = MapConstants.CONT_COLORS[continent.getID()][0];
+		Integer G = MapConstants.CONT_COLORS[continent.getID()][1];
+		Integer B = MapConstants.CONT_COLORS[continent.getID()][2];
 		this.color = new Color(R, G, B);
 	}	
 	public Color getColor(){	
@@ -67,26 +78,12 @@ public class Country {
 	}
 	private void setFont(){
 		Integer fontsize = (int)(12 * (panel_size.getWidth()) / MapConstants.FRAME_WIDTH);
-		this.font = new Font(MapConstants.CONT_FONTS[continentid], Font.BOLD, fontsize);
+		this.font = new Font(MapConstants.CONT_FONTS[continent.getID()], Font.BOLD, fontsize);
 	}
 	public Font getFont(){
 		return font;
 	}
-	public String getContinentName(){
-		return continentname;
+	public Continent getContinent(){
+		return continent;
 	}
-	public Integer getContinentID(){
-		return continentid;
-	}
-	private Dimension panel_size;
-	private int id;
-	private String name;
-	private Integer[] coords;
-	private Integer radius;
-	private ArrayList<Country> adjacent;
-	private ArrayList<Country> othercountries;
-	private Integer continentid;
-	private String continentname;
-	private Color color;
-	private Font font;
 }

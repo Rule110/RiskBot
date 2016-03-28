@@ -1,8 +1,8 @@
 package GUI;
 
 /*
-Team Name: table_1
-Student Numbers: 14480278, 14461158, 14745991
+Team Name: nullptr
+Student Numbers: 14745991
 
 The class that draws the links between countries
 */
@@ -90,7 +90,7 @@ public class Links extends JComponent{
 	private Color determineColor(Country country, Country othercountry){
 		Color c = null;
 		//Same continent?
-		if (country.getContinentID().equals(othercountry.getContinentID())){
+		if (country.getContinent().getID() == othercountry.getContinent().getID()){
 			c = country.getColor().darker();
 		}
 		//Link between continents?

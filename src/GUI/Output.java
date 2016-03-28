@@ -1,8 +1,8 @@
 package GUI;
 
 /*
-	Team Name: table_1
-	Student Numbers: 14480278, 14461158, 14745991
+	Team Name: nullptr
+	Student Numbers: 14745991
 	
 	Create the GUI and add the various components, e.g. Map, Game Info, Text Field.
 	We use a stack structure to store commands entered in the Text Field.

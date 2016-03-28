@@ -23,10 +23,12 @@ public class GameMechanics implements Main.GameMechanics{
 	private ArrayList<Country> countrylist;
 	private ArrayList<Army> armylist;
 	private ArrayList<Player> playerlist;
+	private ArrayList<Continent> continentlist;
 	private Deck deck;
 	private Die die;
 	private Reinforce reinforcemechanics;
 	private Combat combatmechanics;
+	private Fortify fortifymechanics;
 	private Integer initialhumanarmysize = 36;
 	private Integer initialbotarmysize = 24;
 	public GameMechanics(){
@@ -48,13 +50,25 @@ public class GameMechanics implements Main.GameMechanics{
 	public Input getInput(){
 		return this.input;
 	}
+	public void setContinentList(){
+		this.continentlist = new ArrayList<Continent>();
+		for (int i = 0; i < MapConstants.NUM_CONTINENTS; i++){
+			continentlist.add(new Continent(i));
+		}
+	}
+	public ArrayList<Continent> getContinentList(){
+		return this.continentlist;
+	}
 	public void setCountryList(){
 		this.countrylist = new ArrayList<Country>();
 		for (int i = 0; i < MapConstants.COUNTRY_COORD.length; i++){
-			countrylist.add(new Country(i, countrylist, output.getPanelSize()));
+			countrylist.add(new Country(i, this));
 		}
 		for (int i = 0; i < MapConstants.COUNTRY_COORD.length; i++){
 			countrylist.get(i).setAdjacentCountries(MapConstants.ADJACENT[i]);
+		}
+		for (Continent continent: continentlist){
+			continent.setCountriesInContinent(countrylist);
 		}
 	}
 	public ArrayList<Country> getCountryList(){
@@ -130,12 +144,19 @@ public class GameMechanics implements Main.GameMechanics{
 		this.reinforcemechanics = new Reinforce(this);
 	}
 	public void initialReinforce(){
-		Integer players2reinforce;
+		output.updateGameInfoPanel("Roll the dice to determine who is first to Reinforce!");
+		ArrayList<Player> dynamicplayerlist = new ArrayList<Player>();
 		Integer index = this.decideFirst();
-		this.reinforcemechanics.setReinforcements(playerlist.get(index));
+		dynamicplayerlist.add(playerlist.get(index));
+		for (Player player: playerlist){
+			if (player != dynamicplayerlist.get(0)){
+				dynamicplayerlist.add(player);
+			}
+		}
+		Integer players2reinforce;
 		do{
 			players2reinforce = 6;
-			for (Player player : playerlist){
+			for (Player player : dynamicplayerlist){
 				if (player.getAvailableArmies() > 0){
 					this.reinforcemechanics.setReinforcements(player);
 				}
@@ -148,6 +169,9 @@ public class GameMechanics implements Main.GameMechanics{
 	}
 	public void setCombatMechanics(){
 		this.combatmechanics = new Combat(this);
+	}
+	public void setFortifyMechanics(){
+		this.fortifymechanics = new Fortify(this);
 	}
 	private Integer decideFirst(){
 		boolean draw;
@@ -181,8 +205,17 @@ public class GameMechanics implements Main.GameMechanics{
 		return index;
 	}
 	public void startGame(){
+		output.updateGameInfoPanel("Roll the dice to determine who takes the first turn!");
+		ArrayList<Player> dynamicplayerlist = new ArrayList<Player>();
+		Integer index = this.decideFirst();
+		dynamicplayerlist.add(playerlist.get(index));
+		for (Player player: playerlist){
+			if (player != dynamicplayerlist.get(0)){
+				dynamicplayerlist.add(player);
+			}
+		}
 		do {
-			for (Player player : playerlist){
+			for (Player player : dynamicplayerlist){
 				if (player.getNumOccupiedCountry() > 0){
 					this.takeTurn(player);
 				}
@@ -199,6 +232,7 @@ public class GameMechanics implements Main.GameMechanics{
 	}
 	private void takeTurn(Player player){
 		this.reinforcemechanics.setReinforcements(player);
-		
+		//this.combatmechanics.setCombat(player);
+		//this.fortifymechanics.setFortify(player);
 	}
 }

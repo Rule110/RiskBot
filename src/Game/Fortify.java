@@ -3,12 +3,11 @@ package Game;
 Team Name: nullptr
 Student Numbers: 14745991
 
-Combat encapsulates combat mechanics
+Fortify encapsulates fortify mechanics
 */
-public class Combat {
+public class Fortify {
 	private GameMechanics gamemechanics;
-	Combat(GameMechanics gamemechanics){
+	Fortify(GameMechanics gamemechanics){
 		this.gamemechanics = gamemechanics;
 	}
-	
 }

@@ -9,14 +9,14 @@ Reinforcement class
 
 import java.util.ArrayList;
 
-public class Reinforce implements Main.Reinforce {
+public class Reinforce {
 	private GameMechanics gamemechanics;
 	private ArrayList<Army> matches;
 	public Reinforce(GameMechanics gamemechanics){
 		this.gamemechanics = gamemechanics;
 		matches = new ArrayList<Army>();
 	}
-	public void setReinforcements(Player player){
+	void setReinforcements(Player player){
 		if (player.getHuman()){
 			if (player.getInitial() == true){
 				this.reinforceHuman(player, 3);
@@ -26,10 +26,15 @@ public class Reinforce implements Main.Reinforce {
 				while (player.getAvailableArmies() > 0){
 					String num;
 					do {
-						gamemechanics.getOutput().updateGameInfoPanel(
-								player.getPlayerName() + " Enter number of reinforcements to place!");
-						num = gamemechanics.getInput().getInputCommand();
-					} while (this.isNotANumber(num));
+						do {
+							gamemechanics.getOutput().updateGameInfoPanel(
+								player.getPlayerName() + " Enter number of reinforcements to place out of the "
+									+ player.getAvailableArmies() + " available:");
+							num = gamemechanics.getInput().getInputCommand();
+						} while (this.isNotANumber(num));
+					} while (Integer.parseInt(num) > player.getAvailableArmies());
+					gamemechanics.getOutput().updateGameInfoPanel(
+							player.getPlayerName() + " You will be placing " + num + " reinforcements on a country you will now choose:");
 					this.reinforceHuman(player, Integer.parseInt(num));
 				}
 			}
@@ -87,7 +92,39 @@ public class Reinforce implements Main.Reinforce {
 	}
 	private void setAvailableReinforcements(Player player){
 		Integer reinforcements = player.getPlacedArmies().size() / 3;
-		
+		System.out.println(reinforcements);
+		if (reinforcements < 3){
+			reinforcements = 3;
+		}
+		reinforcements += getContinentReinforcements(player);
+		System.out.println(reinforcements);
+		gamemechanics.getOutput().updateGameInfoPanel(
+				player.getPlayerName() + " you will have " + reinforcements + " reinforcements available to place!");
 		player.setAvailableArmies(reinforcements);
+	}
+	private Integer getContinentReinforcements(Player player){
+		Integer extrareinforcements = 0;
+		for (Continent continent : gamemechanics.getContinentList()){
+			boolean fullyoccupied = true;
+			int i = 0;
+			while (fullyoccupied && i < continent.getCountriesInContinent().size()){
+				Country country = continent.getCountriesInContinent().get(i++);
+				boolean found = false;
+				int j = 0;
+				while (!found && j < player.getPlacedArmies().size()){
+					Army army = player.getPlacedArmies().get(j++);
+					if (army.getCountry().getID() == country.getID()){
+						found = true;
+					}
+				}
+				if (!found){
+					fullyoccupied = false;
+				}
+			}
+			if (fullyoccupied){
+				extrareinforcements += continent.getValue();
+			}
+		}
+		return extrareinforcements;
 	}
 }
