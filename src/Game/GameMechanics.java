@@ -88,7 +88,6 @@ public class GameMechanics implements Main.GameMechanics{
 				armylist.get(i).setSize(armysize);
 				output.updateMapPanel();
 				player.setAvailableArmies(player.getAvailableArmies() - armysize);
-
 			}
 			else {
 				i++;
@@ -100,6 +99,7 @@ public class GameMechanics implements Main.GameMechanics{
 			output.updateMapPanel();
 			player.addPlacedArmies(newarmy);
 			player.setAvailableArmies(player.getAvailableArmies() - armysize);
+			country.setArmy(newarmy);
 		}
 	}
 	public ArrayList<Army> getArmyList(){
@@ -232,7 +232,9 @@ public class GameMechanics implements Main.GameMechanics{
 	}
 	private void takeTurn(Player player){
 		this.reinforcemechanics.setReinforcements(player);
-		//this.combatmechanics.setCombat(player);
-		//this.fortifymechanics.setFortify(player);
+		if (player.getHuman()){
+			this.combatmechanics.setCombat(player);
+			//this.fortifymechanics.setFortify(player);	
+		}
 	}
 }

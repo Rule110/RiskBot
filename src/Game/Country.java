@@ -23,6 +23,7 @@ public class Country {
 	private ArrayList<Country> adjacent;
 	private ArrayList<Country> othercountries;
 	private Continent continent;
+	private Army army;
 	private Color color;
 	private Font font;
 	private GameMechanics gamemechanics;
@@ -85,5 +86,11 @@ public class Country {
 	}
 	public Continent getContinent(){
 		return continent;
+	}
+	public Army getArmy(){
+		return army;
+	}
+	public void setArmy(Army army){
+		this.army = army;
 	}
 }

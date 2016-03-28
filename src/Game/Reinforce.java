@@ -25,6 +25,7 @@ public class Reinforce {
 				this.setAvailableReinforcements(player);
 				while (player.getAvailableArmies() > 0){
 					String num;
+					boolean loop = true;
 					do {
 						do {
 							gamemechanics.getOutput().updateGameInfoPanel(
@@ -32,7 +33,21 @@ public class Reinforce {
 									+ player.getAvailableArmies() + " available:");
 							num = gamemechanics.getInput().getInputCommand();
 						} while (this.isNotANumber(num));
-					} while (Integer.parseInt(num) > player.getAvailableArmies());
+						if (Integer.parseInt(num) > player.getAvailableArmies()){
+							gamemechanics.getOutput().updateGameInfoPanel(
+								player.getPlayerName() + " the number entered is bigger than the  "
+								+ player.getAvailableArmies() + " reinforcements available! Try again!");
+							loop = true;
+						}
+						else if (Integer.parseInt(num) < 1){
+							gamemechanics.getOutput().updateGameInfoPanel(
+								player.getPlayerName() + " the number is less than 1! You must place at least 1!");
+							loop = true;
+						}
+						else {
+							loop = false;
+						}
+					} while (loop);
 					gamemechanics.getOutput().updateGameInfoPanel(
 							player.getPlayerName() + " You will be placing " + num + " reinforcements on a country you will now choose:");
 					this.reinforceHuman(player, Integer.parseInt(num));
@@ -92,12 +107,10 @@ public class Reinforce {
 	}
 	private void setAvailableReinforcements(Player player){
 		Integer reinforcements = player.getPlacedArmies().size() / 3;
-		System.out.println(reinforcements);
 		if (reinforcements < 3){
 			reinforcements = 3;
 		}
 		reinforcements += getContinentReinforcements(player);
-		System.out.println(reinforcements);
 		gamemechanics.getOutput().updateGameInfoPanel(
 				player.getPlayerName() + " you will have " + reinforcements + " reinforcements available to place!");
 		player.setAvailableArmies(reinforcements);
