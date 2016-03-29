@@ -29,7 +29,7 @@ public class Country {
 	private GameMechanics gamemechanics;
 	public Country(Integer arrayindex, GameMechanics gamemechanics){
 		this.gamemechanics = gamemechanics;
-		this.panel_size = gamemechanics.getOutput().getPanelSize();
+		this.panel_size = this.gamemechanics.getOutput().getPanelSize();
 		id = arrayindex;
 		radius = (int)(20*MapConstants.SCALING_CONSTANT);
 		this.name = MapConstants.COUNTRY_NAMES[arrayindex];
