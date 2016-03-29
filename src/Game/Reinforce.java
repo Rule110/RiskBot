@@ -61,7 +61,7 @@ public class Reinforce {
 	private void reinforceHuman(Player player, Integer num){
 		do {
 			gamemechanics.getOutput().updateGameInfoPanel(
-					player.getPlayerName() + " Enter unambiguous country name (your armies already occupy) to reinforce it:\n");
+					player.getPlayerName() + " Enter unambiguous country name (your armies already occupy) to reinforce it:");
 			String input = gamemechanics.getInput().getInputCommand();
 			for (Army army : player.getPlacedArmies()){
 				String countryname = army.getCountry().getName();

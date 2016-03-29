@@ -44,7 +44,7 @@ public class Fortify {
 				else {
 					gamemechanics.getOutput().updateGameInfoPanel(
 						player.getPlayerName() + " will be moving units from "
-						+ army.getCountry().getName() + "to fortify another territory!");
+						+ army.getCountry().getName() + " to fortify another territory!");
 					fortifyfrom = army;
 				}
 			}
@@ -57,34 +57,41 @@ public class Fortify {
 	}
 	private void fortifyDestinationCheck(Army fortifyfrom){
 		Player player = fortifyfrom.getPlayer();
-		String fortifyto_str = null;
+		String fortifyto_substr = null;
 		Army fortifyto = null;
 		boolean found = false;
 		while (fortifyto == null){
 			gamemechanics.getOutput().updateGameInfoPanel(
-					player.getPlayerName() + " select country to fortify!"
-					+ " Enter unambiguous name:");
-			fortifyto_str = gamemechanics.getInput().getInputCommand();
+				player.getPlayerName() + " select country to fortify! Enter unambiguous name:");
+			fortifyto_substr = gamemechanics.getInput().getInputCommand();
 			for (Army army : player.getPlacedArmies()){
 				String occupiedcountry = army.getCountry().getName().toLowerCase();
-				if (occupiedcountry.contains(fortifyto_str.toLowerCase())){
+				if (occupiedcountry.contains(fortifyto_substr.toLowerCase())){
 					found = true;
 					if (fortifyto != null){
 						gamemechanics.getOutput().updateGameInfoPanel(
-							player.getPlayerName() + " country name is ambiguous. Try again!");
+							player.getPlayerName() + fortifyto_substr + " is ambiguous. Try again!");
 						fortifyto = null;
 					}
 					else {
 						fortifyto = army;
-						ArrayList<Army> adjacentownedarmies= getAdjacentOwned(fortifyfrom, null);
-						boolean contiguous = checkContiguous(adjacentownedarmies, fortifyfrom, fortifyto);
+						String fortifyfrom_str = fortifyfrom.getCountry().getName();
+						String fortifyto_str = fortifyto.getCountry().getName();
+						ArrayList<Army> alreadychecked = new ArrayList<Army>();
+						alreadychecked.add(fortifyfrom);
+						ArrayList<Army> adjacentownedarmies= getAdjacentOwned(fortifyfrom, alreadychecked);
+						boolean contiguous = checkContiguous(adjacentownedarmies, fortifyto, alreadychecked);
 						if (contiguous){
-							Integer fortifysize = getFortifySize(player, fortifyfrom);
+							Integer fortifysize = getFortifySize(player, fortifyfrom, fortifyto);
 							this.fortify(fortifyfrom, fortifyto, fortifysize);
+							gamemechanics.getOutput().updateGameInfoPanel(
+								player.getPlayerName() + " will be fortifying from " +
+								fortifyfrom_str + " to " + fortifyto_str + "!");
 						}
-						else {gamemechanics.getOutput().updateGameInfoPanel(
+						else {
+							gamemechanics.getOutput().updateGameInfoPanel(
 								player.getPlayerName() + " Countries are not contiguous! Cannot fortify from " +
-									fortifyfrom + " to " + fortifyto_str + "!");
+								fortifyfrom_str + " to " + fortifyto_str + "!");
 							fortifyto = null;
 						}
 					}
@@ -92,27 +99,40 @@ public class Fortify {
 			}
 			if (!found){
 				gamemechanics.getOutput().updateGameInfoPanel(
-					player.getPlayerName() + " no match for " + fortifyto_str + " found in your occupied countries!");
+					player.getPlayerName() + " no match for " + fortifyto_substr + " found in your occupied countries!");
 			}
 		}
 	}
-	private ArrayList<Army> getAdjacentOwned(Army fortifyfrom, Army fortifyfrom_prev){
+	private ArrayList<Army> getAdjacentOwned(Army fortifyfrom, ArrayList<Army> alreadychecked){
 		ArrayList<Country> adjacentcountries = fortifyfrom.getCountry().getAdjacentCountries();
 		ArrayList<Army> adjacentownedarmies = new ArrayList<Army>();
 		for (Country country : adjacentcountries){
-			if (country.getArmy().getPlayer() == fortifyfrom.getPlayer()){
-				if (country.getArmy() != fortifyfrom_prev){
-					adjacentownedarmies.add(country.getArmy());
-				}	
+			Army army = country.getArmy();
+			if (army.getPlayer() == fortifyfrom.getPlayer()){
+				if (!AlreadyChecked(army, alreadychecked)){
+					adjacentownedarmies.add(army);
+				}
 			}
 		}
 		return adjacentownedarmies;		 
 	}
-	private boolean checkContiguous(ArrayList<Army> adjacentownedarmies, Army fortifyfrom_prev, Army fortifyto){
+	private boolean AlreadyChecked(Army checkthisarmy, ArrayList<Army> alreadychecked){
+		boolean found = false;
+		for (Army army : alreadychecked){
+			if (army == checkthisarmy){
+				found = true;
+			}
+		}
+		return found;
+	}
+	private boolean checkContiguous(ArrayList<Army> adjacentownedarmies, Army fortifyto, ArrayList<Army> alreadychecked){
 		boolean contiguityfound = false;
 		for (Army ownedarmy : adjacentownedarmies){
 			if (ownedarmy == fortifyto){
 				contiguityfound = true;
+			}
+			else {
+				alreadychecked.add(ownedarmy);
 			}
 		}
 		if (contiguityfound){
@@ -123,8 +143,9 @@ public class Fortify {
 		}
 		else {
 			for (Army fortifyfrom : adjacentownedarmies){
-				ArrayList<Army> adjacentownedarmies_next = getAdjacentOwned(fortifyfrom, fortifyfrom_prev);
-				boolean recursivereturn = checkContiguous(adjacentownedarmies_next, fortifyfrom, fortifyto);
+				alreadychecked.add(fortifyfrom);
+				ArrayList<Army> adjacentownedarmies_next = getAdjacentOwned(fortifyfrom, alreadychecked);
+				boolean recursivereturn = checkContiguous(adjacentownedarmies_next, fortifyto, alreadychecked);
 				if (recursivereturn){
 					contiguityfound = true;
 				}
@@ -132,18 +153,30 @@ public class Fortify {
 			return contiguityfound;
 		}
 	}
-	private Integer getFortifySize(Player player, Army fortifyfrom){
+	private Integer getFortifySize(Player player, Army fortifyfrom, Army fortifyto){
 		Integer fortifysize = null;
 		boolean loop = true;
 		do {
 			String num = null;
 			do {
 				gamemechanics.getOutput().updateGameInfoPanel(
-					player.getPlayerName() + " Enter the number of units you wish to move from here to fortify elsewhere.");
+					player.getPlayerName() + " Enter the number of units you wish to move from here to fortify " +
+					fortifyto.getCountry().getName());
 				num	 = gamemechanics.getInput().getInputCommand();
 			} while (isNotAnInteger(num));
 			fortifysize = Integer.parseInt(num);
-			if (fortifyfrom.getSize() - fortifysize < 1){
+			if (fortifysize > fortifyfrom.getSize()){
+				gamemechanics.getOutput().updateGameInfoPanel(
+					player.getPlayerName() + " that's bigger than the " +
+					fortifyfrom.getSize() + " armies you have on " + fortifyfrom.getCountry().getName() + "!");
+				loop = true;
+			}
+			else if (fortifysize < 1){
+				gamemechanics.getOutput().updateGameInfoPanel(
+						player.getPlayerName() + " you have to enter a positive whole number! ");
+					loop = true;
+			}
+			else if (fortifyfrom.getSize() - fortifysize < 1){
 				gamemechanics.getOutput().updateGameInfoPanel(
 					player.getPlayerName() + " you have to leave at least one army on your country!");
 				loop = true;

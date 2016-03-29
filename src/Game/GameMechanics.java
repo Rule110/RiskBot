@@ -219,24 +219,32 @@ public class GameMechanics implements Main.GameMechanics{
 				if (player.getNumOccupiedCountry() > 0){
 					this.takeTurn(player);
 				}
-				else if (player.getHuman()){
+				else if (!player.getLost()){
 					this.getOutput().updateGameInfoPanel(player.getPlayerName() + " has lost!");
-					this.endgame = true;
-					System.exit(0);
-				}
-				else {
-					this.getOutput().updateGameInfoPanel(player.getPlayerName() + " has lost!");
+					player.setLost(true);
+					if (player.getHuman()){
+						this.endgame = true;
+					}
 				}
 			}
 		} while (!endgame);
+		System.exit(0);
 	}
 	private void takeTurn(Player player){
 		this.reinforcemechanics.setReinforcements(player);
 		if (player.getHuman()){
-			this.combatmechanics.setCombat(player);
-			output.updateGameInfoPanel("Enter any character to fortify or skip to skip:");
+			boolean combatend = false;
+			do {
+				this.combatmechanics.setCombat(player);
+				output.updateGameInfoPanel("Enter any character to attack again!. Enter \"end\" to end combat!");
+				String again = input.getInputCommand();
+				if (again.equalsIgnoreCase("end")){
+					combatend = true;
+				}
+			} while (!combatend);
+			output.updateGameInfoPanel("Enter any character to fortify or \"skip\" to skip:");
 			String fortify = input.getInputCommand();
-			if (fortify.equalsIgnoreCase("skip")){
+			if (!(fortify.equalsIgnoreCase("skip"))){
 				this.fortifymechanics.setFortify(player);
 			}
 		}

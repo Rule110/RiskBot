@@ -22,6 +22,7 @@ public class Player implements Main.Player{
 	private Integer availablearmies;
 	private ArrayList<Army> placedarmies;
 	private boolean initialreinforcement;
+	private boolean lost = false;
 	public Player(GameMechanics gamemechanics, boolean human){
 		this.gamemechanics = gamemechanics;
 		this.human = human;
@@ -94,5 +95,11 @@ public class Player implements Main.Player{
 	}
 	public boolean getInitial(){
 		return initialreinforcement;
+	}
+	public boolean getLost(){
+		return lost;
+	}
+	public void setLost(boolean lost){
+		this.lost = lost;
 	}
 }

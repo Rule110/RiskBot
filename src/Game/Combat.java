@@ -31,10 +31,15 @@ public class Combat {
 		Player defender = defenceforce.getPlayer();
 		Integer defencesize = null;
 		if (defender.getHuman()){
-			defencesize = getDefenceSize(defender);	
+			defencesize = getDefenceSize(defender, defenceforce);	
 		}
 		else {
-			defencesize = 1 + (defenceforce.getSize() % 2);
+			if (defenceforce.getSize() > 1){
+				defencesize = 2;
+			}
+			else {
+				defencesize = 1;
+			}
 		}
 		beginInvasion(assaultforce, assaultsize, defenceforce, defencesize);
 	}
@@ -125,7 +130,7 @@ public class Combat {
 		} while (loop);
 		return assaultsize;
 	}
-	private Integer getDefenceSize(Player defender){
+	private Integer getDefenceSize(Player defender, Army defenceforce){
 		Integer defencesize = null;
 		boolean loop = true;
 		do {
@@ -139,6 +144,11 @@ public class Combat {
 			if (defencesize > 2 || defencesize < 1){
 				gamemechanics.getOutput().updateGameInfoPanel(
 						defender.getPlayerName() + " Defence size can only be 1 or 2!");
+				loop = true;
+			}
+			else if (defencesize > defenceforce.getSize()){
+				gamemechanics.getOutput().updateGameInfoPanel(
+						defender.getPlayerName() + " Defence size can't be bigger than your defending army size!");
 				loop = true;
 			}
 			else {
@@ -162,33 +172,40 @@ public class Combat {
 		Player defender = defenceforce.getPlayer();
 		do {
 			ArrayList<Integer> attackerrolls = new ArrayList<Integer>();
-			for (int i = assaultsize; i > 1; i--){
+			int i = assaultsize;
+			while (i > 0){
 				gamemechanics.getOutput().updateGameInfoPanel(
-					attacker.getPlayerName() + " you get " + i +
-					" rolls. Enter any character to roll the dice!");
+					attacker.getPlayerName() + " has " + i-- + " rolls left. Enter any character to roll!");
 				gamemechanics.getInput().getInputCommand();
 				gamemechanics.getDice().roll();
-				attackerrolls.add(gamemechanics.getDice().getFace());
+				Integer face = gamemechanics.getDice().getFace();
+				gamemechanics.getOutput().updateGameInfoPanel(
+						attacker.getPlayerName() + " has rolled a " + face + "!");
+				attackerrolls.add(face);
 			}
-			System.out.println("assault size: " + assaultsize);
 			Integer attackerhighestroll = max(attackerrolls);
 			ArrayList<Integer> defenderrolls = new ArrayList<Integer>();
-			for (int i = defencesize; i > 1; i--){
-				gamemechanics.getOutput().updateGameInfoPanel(
-					attacker.getPlayerName() + " you get " + i +
-					" rolls. Enter any character to roll the dice!");
-				gamemechanics.getInput().getInputCommand();
+			int j = defencesize;
+			while (j > 0){
+				if (defender.getHuman()){
+					gamemechanics.getOutput().updateGameInfoPanel(
+						defender.getPlayerName() + " has " + j + " rolls left. Enter any character to roll!");
+					gamemechanics.getInput().getInputCommand();
+				}
 				gamemechanics.getDice().roll();
-				defenderrolls.add(gamemechanics.getDice().getFace());
+				Integer face = gamemechanics.getDice().getFace();
+				gamemechanics.getOutput().updateGameInfoPanel(
+					defender.getPlayerName() + " has rolled a " + face + "!");
+				defenderrolls.add(face);
+				j--;
 			}
-			System.out.println("defence size: " + defencesize);
 			Integer defenderhighestroll = max(defenderrolls);
 			Country attackercountry = assaultforce.getCountry();
 			Country defendercountry = defenceforce.getCountry();
 			if (defenderhighestroll == attackerhighestroll){
 				gamemechanics.getOutput().updateGameInfoPanel("It's a draw! " +
-					defender.getPlayerName() + " rolled a " + defenderhighestroll + "! " +
-					attacker.getPlayerName() + " rolled a " + attackerhighestroll + "! " +
+					defender.getPlayerName() + " rolled a " + defenderhighestroll + "!   " +
+					attacker.getPlayerName() + " rolled a " + attackerhighestroll + "!   " +
 					defender.getPlayerName() + " wins battle by default!");
 				assaultsize--;
 				gamemechanics.setArmyList(attacker, attackercountry, assaultforce.getSize() - 1);
