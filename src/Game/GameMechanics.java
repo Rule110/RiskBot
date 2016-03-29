@@ -234,7 +234,11 @@ public class GameMechanics implements Main.GameMechanics{
 		this.reinforcemechanics.setReinforcements(player);
 		if (player.getHuman()){
 			this.combatmechanics.setCombat(player);
-			//this.fortifymechanics.setFortify(player);	
+			output.updateGameInfoPanel("Enter any character to fortify or skip to skip:");
+			String fortify = input.getInputCommand();
+			if (fortify.equalsIgnoreCase("skip")){
+				this.fortifymechanics.setFortify(player);
+			}
 		}
 	}
 }

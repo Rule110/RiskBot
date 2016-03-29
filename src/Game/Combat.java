@@ -1,13 +1,11 @@
 package Game;
-
-import java.util.ArrayList;
-
 /*
 Team Name: nullptr
 Student Numbers: 14745991
 
 Combat encapsulates combat mechanics
 */
+import java.util.ArrayList;
 public class Combat {
 	private GameMechanics gamemechanics;
 	Combat(GameMechanics gamemechanics){
