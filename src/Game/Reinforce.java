@@ -111,6 +111,7 @@ public class Reinforce {
 			reinforcements = 3;
 		}
 		reinforcements += getContinentReinforcements(player);
+		reinforcements += getTerritoryCardReinforcements(player);
 		gamemechanics.getOutput().updateGameInfoPanel(
 				player.getPlayerName() + " you will have " + reinforcements + " reinforcements available to place!");
 		player.setAvailableArmies(reinforcements);
@@ -139,5 +140,8 @@ public class Reinforce {
 			}
 		}
 		return extrareinforcements;
+	}
+	private Integer getTerritoryCardReinforcements(Player player){
+		
 	}
 }

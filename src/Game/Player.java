@@ -11,6 +11,7 @@ package Game;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import Deck.Card;
 import Main.GameMechanics;
 
 public class Player implements Main.Player{
@@ -23,6 +24,7 @@ public class Player implements Main.Player{
 	private ArrayList<Army> placedarmies;
 	private boolean initialreinforcement;
 	private boolean lost = false;
+	private ArrayList<Card> hand;
 	public Player(GameMechanics gamemechanics, boolean human){
 		this.gamemechanics = gamemechanics;
 		this.human = human;
@@ -34,6 +36,7 @@ public class Player implements Main.Player{
 		}
 		this.placedarmies = new ArrayList<Army>();
 		this.initialreinforcement = true;
+		this.hand = new ArrayList<Card>();
 	}
 	public void setPlayerName(Integer playernumber) {
 		if (human){
@@ -101,5 +104,11 @@ public class Player implements Main.Player{
 	}
 	public void setLost(boolean lost){
 		this.lost = lost;
+	}
+	public ArrayList<Card> getHand(){
+		return this.hand;
+	}
+	public void addCardToHand(Card card){
+		this.hand.add(card);
 	}
 }

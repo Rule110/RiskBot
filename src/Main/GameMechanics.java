@@ -43,4 +43,5 @@ public interface GameMechanics {
 	public void initialReinforce();
 	public void setCombatMechanics();
 	public void setFortifyMechanics();
+	public Deck getDeck();
 }

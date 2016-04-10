@@ -249,4 +249,7 @@ public class GameMechanics implements Main.GameMechanics{
 			}
 		}
 	}
+	public Deck getDeck(){
+		return this.deck;
+	}
 }
