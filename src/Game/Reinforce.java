@@ -8,13 +8,15 @@ Reinforcement class
 */
 
 import java.util.ArrayList;
-
+import Deck.Card;
 public class Reinforce {
 	private GameMechanics gamemechanics;
 	private ArrayList<Army> matches;
+	private Integer setstradedin;
 	public Reinforce(GameMechanics gamemechanics){
 		this.gamemechanics = gamemechanics;
-		matches = new ArrayList<Army>();
+		this.matches = new ArrayList<Army>();
+		this.setstradedin = 0;
 	}
 	void setReinforcements(Player player){
 		if (player.getHuman()){
@@ -142,6 +144,61 @@ public class Reinforce {
 		return extrareinforcements;
 	}
 	private Integer getTerritoryCardReinforcements(Player player){
-		
+		Integer territorycardreinforcements = 0;
+		if (player.getHand().size() > 2){
+			this.gamemechanics.getOutput().updateGameInfoPanel(
+					"These are the territory cards in your hand: ");
+			for (Card card : player.getHand()){
+				this.gamemechanics.getOutput().updateGameInfoPanel(card + ",\t");
+			}
+			if (player.getHand().size() > 4){
+				this.gamemechanics.getOutput().updateGameInfoPanel(
+						"You have greater than five territory cards. You must exchange a set!\n");
+				territorycardreinforcements = this.exchange(player.getHand());
+			}
+			else if (hasSet(player.getHand())){
+				this.gamemechanics.getOutput().updateGameInfoPanel(
+						"You have a set you can exchange!");
+				territorycardreinforcements = this.exchange(player.getHand());
+			}
+			else {
+				this.gamemechanics.getOutput().updateGameInfoPanel("No territory cards to exchange!");
+			}
+		}
+		return territorycardreinforcements;
+	}
+	private boolean hasSet(ArrayList<Card> playerhand){
+		boolean foundset = false;
+		Integer inf = 0, cav = 0, art = 0, wild = 0;
+		for (Card card : playerhand){
+			switch (card.getInsignia()){
+				case 0:		inf++;
+							break;					
+				case 1:		cav++;
+							break;
+				case 2:		art++;
+							break;
+				case 3:		wild++;
+							break;
+			}
+		}
+		if (inf > 2 || cav > 2 || art > 2){
+			foundset = true;
+		}
+		else if (inf > 1 || cav > 1 || art > 1 && wild == 1){
+			foundset = true;
+		}
+		else if (inf > 0 || cav > 0 || art > 0 && wild == 2){
+			foundset = true;
+		}
+		else {
+			foundset = false;
+		}
+		return foundset;
+	}
+	private Integer exchange(ArrayList<Card> playerhand){
+		this.gamemechanics.getOutput().updateGameInfoPanel(
+				"Enter III to exchange 3 infantry, CCC to exchange 3 cavalry" +
+				"or AAA to exchange 3 artillery!\n");
 	}
 }

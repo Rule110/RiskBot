@@ -252,8 +252,7 @@ public class Combat {
 		if (conqueredatleastone){
 			Card card = gamemechanics.getDeck().drawTerritoryCard();
 			gamemechanics.getOutput().updateGameInfoPanel(
-					attacker.getPlayerName() + " has won the territory card: " +
-					card.getTerritory().getName() + " ; " + card.getInsignia());
+					attacker.getPlayerName() + " has won the territory card: " + card);
 			attacker.addCardToHand(card);
 		}
 	}

@@ -4,26 +4,31 @@ import Game.Country;
 
 public class Card {
 	private Country territory;
-	private String insignia;
+	private Integer insignia;
 	Card(Country territory, Integer insignia){
 		this.territory = territory;
-		switch (insignia){
-			case 0:		this.insignia = "Infantry";
-						break;
-			case 1:		this.insignia = "Cavalry";
-						break;
-			case 2:		this.insignia = "Artillery";
-						break;
-			case 3:		this.insignia = "Wild";
-						break;
-			default:	this.insignia = "Error";
-						break;
-		}
+		this.insignia = insignia;
 	}
 	public Country getTerritory(){
 		return this.territory;
 	}
-	public String getInsignia(){
+	public Integer getInsignia(){
 		return this.insignia;
+	}
+	public String toString(){
+		String insignia_str = "";
+		switch (this.insignia){
+		case 0:		insignia_str = "Infantry";
+					break;
+		case 1:		insignia_str = "Cavalry";
+					break;
+		case 2:		insignia_str = "Artillery";
+					break;
+		case 3:		insignia_str = "Wild";
+					break;
+		default:	insignia_str = "Error";
+					break;
+	}
+		return this.territory.getName() + " ; " + insignia_str;
 	}
 }
