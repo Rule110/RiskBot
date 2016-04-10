@@ -6,6 +6,7 @@ Student Numbers: 14745991
 Combat encapsulates combat mechanics
 */
 import java.util.ArrayList;
+import Deck.Card;
 public class Combat {
 	private GameMechanics gamemechanics;
 	Combat(GameMechanics gamemechanics){
@@ -167,7 +168,7 @@ public class Combat {
 		}
 	}
 	private void beginInvasion(Army assaultforce, Integer assaultsize, Army defenceforce, Integer defencesize){
-		boolean loop = true;
+		boolean loop = true, conqueredatleastone = false;
 		Player attacker = assaultforce.getPlayer();
 		Player defender = defenceforce.getPlayer();
 		do {
@@ -233,7 +234,7 @@ public class Combat {
 				gamemechanics.setArmyList(attacker, defendercountry, assaultsize);
 				gamemechanics.getOutput().updateGameInfoPanel(
 					attacker.getPlayerName() + " has conquered " + defenceforce.getCountry().getName() + "! ");
-				
+				conqueredatleastone = true;
 			}
 			else if (assaultsize == 0){
 				loop = false;
@@ -248,6 +249,13 @@ public class Combat {
 				}
 			}
 		} while (loop);
+		if (conqueredatleastone){
+			Card card = gamemechanics.getDeck().drawTerritoryCard();
+			gamemechanics.getOutput().updateGameInfoPanel(
+					attacker.getPlayerName() + " has won the territory card: " +
+					card.getTerritory().getName() + " ; " + card.getInsignia());
+			attacker.addCardToHand(card);
+		}
 	}
 	private Integer max(ArrayList<Integer> rolls){
 		int max = 0;
