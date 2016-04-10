@@ -167,7 +167,7 @@ public class Combat {
 		}
 	}
 	private void beginInvasion(Army assaultforce, Integer assaultsize, Army defenceforce, Integer defencesize){
-		boolean loop = true, conqueredatleastone = false;
+		boolean loop = true;
 		Player attacker = assaultforce.getPlayer();
 		Player defender = defenceforce.getPlayer();
 		do {
@@ -248,9 +248,6 @@ public class Combat {
 				}
 			}
 		} while (loop);
-		if (conqueredatleastone){
-			attacker.addCardToHand(gamemechanics.getDeck().drawTerritoryCard());
-		}
 	}
 	private Integer max(ArrayList<Integer> rolls){
 		int max = 0;
