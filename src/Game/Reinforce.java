@@ -14,11 +14,13 @@ public class Reinforce {
 	private ArrayList<Army> matches;
 	private Integer tradedinsets;
 	private boolean ownedterritorycardbonus;
+	private Integer territoryreinforcements;
 	
 	public Reinforce(GameMechanics gamemechanics){
 		this.gamemechanics = gamemechanics;
 		this.matches = new ArrayList<Army>();
 		this.tradedinsets = 0;
+		this.territoryreinforcements = 2;
 	}
 	
 	void setReinforcements(Player player){
@@ -156,11 +158,13 @@ public class Reinforce {
 	private Integer getTerritoryCardReinforcements(Player player){
 		Integer territorycardreinforcements = 0;
 		if (player.getHand().size() > 2){
-			this.gamemechanics.getOutput().updateGameInfoPanel(
-					"These are the territory cards in your hand: ");
+			this.gamemechanics.getOutput().updateGameInfoPanel(player.getPlayerName() +
+					" these are the territory cards in your hand: ");
+			String playerhand_str = "";
 			for (Card card : player.getHand()){
-				this.gamemechanics.getOutput().updateGameInfoPanel(card + ",\t");
+				playerhand_str += card + ",\t";
 			}
+			this.gamemechanics.getOutput().updateGameInfoPanel(playerhand_str);
 			if (player.getHand().size() > 4){
 				this.gamemechanics.getOutput().updateGameInfoPanel(
 						"You have greater than five territory cards. You must exchange a set!\n");
@@ -170,7 +174,7 @@ public class Reinforce {
 				this.gamemechanics.getOutput().updateGameInfoPanel(
 						"You have a set you can exchange! Enter any character to continue or skip to skip!");
 				String choice = this.gamemechanics.getInput().getInputCommand();
-				if (choice.equalsIgnoreCase("skip")){
+				if (!choice.equalsIgnoreCase("skip")){
 					territorycardreinforcements = this.exchange(player);
 				}
 			}
@@ -199,10 +203,10 @@ public class Reinforce {
 		if (inf > 2 || cav > 2 || art > 2){
 			foundset = true;
 		}
-		else if (inf > 1 || cav > 1 || art > 1 && wild == 1){
+		else if ((inf > 1 || cav > 1 || art > 1) && wild > 0){
 			foundset = true;
 		}
-		else if (inf > 0 || cav > 0 || art > 0 && wild == 2){
+		else if ((inf > 0 || cav > 0 || art > 0) && wild > 1){
 			foundset = true;
 		}
 		else {
@@ -217,7 +221,7 @@ public class Reinforce {
 		do {
 			this.gamemechanics.getOutput().updateGameInfoPanel(
 					"Enter III to exchange 3 infantry, CCC to exchange 3 cavalry" +
-					"or AAA to exchange 3 artillery!");
+					" or AAA to exchange 3 artillery!");
 			set  = this.gamemechanics.getInput().getInputCommand();
 			if (set.equalsIgnoreCase("III")){
 				loop = removeSet(player, 0);
@@ -233,17 +237,18 @@ public class Reinforce {
 				loop = true;
 			}
 		} while (loop);
-		Integer reinforcements = 2;
 		if (tradedinsets < 6){
-			reinforcements += 2;
+			this.territoryreinforcements += 2;
 		}
 		else if (tradedinsets == 6){
-			reinforcements += 3;
+			this.territoryreinforcements += 3;
 		}
 		else {
-			reinforcements += 5;
+			this.territoryreinforcements += 5;
 		}
+		Integer reinforcements = this.territoryreinforcements;
 		if (ownedterritorycardbonus){
+			this.gamemechanics.getOutput().updateGameInfoPanel("You own a territory in your hand! Extra 2 reinforcements!");
 			reinforcements += 2;
 			ownedterritorycardbonus = false;
 		}
@@ -266,10 +271,14 @@ public class Reinforce {
 			}
 		}
 		if (match >= 3){
+			int j = 0;
 			for (int i = 0; i < playerhand.size(); i++){
 				Integer cardinsignia = playerhand.get(i).getInsignia();
 				if (cardinsignia == insignia || cardinsignia == 3){
-					playerhand.remove(i);
+					if (j < 3){
+						playerhand.remove(i);
+						j++;
+					}
 				}
 			}
 			this.gamemechanics.getOutput().updateGameInfoPanel("Set traded in!");
