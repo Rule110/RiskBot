@@ -20,6 +20,8 @@ import javax.swing.JComponent;
 import Game.Army;
 
 public class Armies extends JComponent {
+	private Output output;
+	private static final long serialVersionUID = 1L;
 	
 	public Armies(Output output){
 		this.output = output;
@@ -30,17 +32,20 @@ public class Armies extends JComponent {
 		output.setPlayerKey(new PlayerComponent(output));
 		this.add(output.getPlayerKey(), BorderLayout.EAST);
 	}
+	
 	@Override
 	public void paintComponent(Graphics g){
 		this.drawArmies(this.initialiseGFX2D(g));
 	}
+	
 	private Graphics2D initialiseGFX2D(Graphics g){	
 		super.paintComponent(g);
 		Graphics2D gfx2d = (Graphics2D)g;	
 		gfx2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);	
 		return gfx2d;
-	}	
+	}
+	
 	private void drawArmies(Graphics2D gfx2d){
 		for (Army army : output.getArmyList()){
 			if (army.getSize() > 0){
@@ -71,6 +76,7 @@ public class Armies extends JComponent {
 			}
 		}
 	}
+	
 	private void drawSizeOutline(Graphics2D gfx2d, String name, Integer x, Integer y){
 		gfx2d.setPaint(Color.black);
 		gfx2d.drawString(name, x - 1, y - 1);
@@ -78,6 +84,4 @@ public class Armies extends JComponent {
 		gfx2d.drawString(name, x + 1, y - 1);
 		gfx2d.drawString(name, x + 1, y + 1);
 	}
-	private Output output;
-	private static final long serialVersionUID = 1L;
 }

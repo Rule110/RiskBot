@@ -20,7 +20,9 @@ import javax.swing.JComponent;
 import Game.Country;
 
 public class Countries extends JComponent{
-
+	Output output;
+	private static final long serialVersionUID = 1L;
+	
 	public Countries(Output output){
 		this.output = output;
 		this.setPreferredSize(output.getPanelSize());
@@ -28,23 +30,27 @@ public class Countries extends JComponent{
 		output.setArmies(new Armies(output));
 		this.add(output.getArmies());
 	}
+	
 	@Override
 	public void paintComponent(Graphics g){		
 		this.drawCountries(this.initialiseGFX2D(g));
 	}
+	
 	private Graphics2D initialiseGFX2D(Graphics g){	
 		super.paintComponent(g);
 		Graphics2D gfx2d = (Graphics2D)g;
 		gfx2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);		
 		return gfx2d;
-	}	
+	}
+	
 	private void drawCountries(Graphics2D gfx2d){
 		for (Country country : output.getCountryList()){
 			drawCountry(gfx2d, country);
 			drawName(gfx2d, country);
 		}
 	}
+	
 	private void drawCountry(Graphics2D gfx2d, Country country){
 		//Draw Country Outline
 		//Draw central Outline
@@ -75,6 +81,7 @@ public class Countries extends JComponent{
 		gfx2d.setPaint(country.getColor());
 		gfx2d.fill(new Ellipse2D.Double(x, y, radius*2, radius*2));	
 	}
+	
 	private void drawName(Graphics2D gfx2d, Country country){
 		Integer radius = country.getRadius();
 		Integer nameoffset = radius + (radius / 4);
@@ -86,6 +93,7 @@ public class Countries extends JComponent{
 		gfx2d.setPaint(country.getColor().darker());
 		gfx2d.drawString(name, name_x, name_y);
 	}
+	
 	private void drawNameOutline(Graphics2D gfx2d, String name, Integer x, Integer y){
 		gfx2d.setPaint(Color.black);
 		gfx2d.drawString(name, x - 1, y - 1);
@@ -93,6 +101,4 @@ public class Countries extends JComponent{
 		gfx2d.drawString(name, x + 1, y - 1);
 		gfx2d.drawString(name, x + 1, y + 1);
 	}
-	Output output;
-	private static final long serialVersionUID = 1L;
 }

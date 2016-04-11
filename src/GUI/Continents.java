@@ -18,10 +18,14 @@ import java.awt.RenderingHints;
 import javax.swing.JComponent;
 
 public class Continents extends JComponent{
+	private Output output;
+	private static final long serialVersionUID = 1L;
+	
 	public Continents(Output output){
 		this.output = output;
 		this.setPreferredSize(new Dimension((int)this.output.getPanelSize().getWidth()/2, (int)this.output.getPanelSize().getHeight()));
 	}
+	
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
@@ -31,6 +35,7 @@ public class Continents extends JComponent{
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		this.drawContinentKey(gfx2d);
 	}
+	
 	private void drawContinentKey(Graphics2D gfx2d){
 		Integer x = 16;
 		Integer y = (int) this.output.getPanelSize().getHeight();
@@ -53,6 +58,7 @@ public class Continents extends JComponent{
 			i++;
 		}
 	}
+	
 	private void drawNameOutline(Graphics2D gfx2d, String name, Integer x, Integer y){
 		gfx2d.setPaint(Color.black);
 		gfx2d.drawString(name, x - 1, y - 1);
@@ -60,6 +66,4 @@ public class Continents extends JComponent{
 		gfx2d.drawString(name, x + 1, y - 1);
 		gfx2d.drawString(name, x + 1, y + 1);
 	}
-	private Output output;
-	private static final long serialVersionUID = 1L;
 }

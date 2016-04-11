@@ -15,6 +15,9 @@ import java.awt.Rectangle;
 import javax.swing.JPanel;
 
 public class MapPanel extends JPanel {
+	private Output output;
+	private static final long serialVersionUID = 1L;
+	
 	public MapPanel(Output output){
 		this.output = output;
 		MapConstants.setScaling(output.getPanelSize().getHeight() / MapConstants.FRAME_HEIGHT);		
@@ -22,6 +25,7 @@ public class MapPanel extends JPanel {
 		output.setLinks(new Links(output));
 		this.add(output.getLinks());	
 	}
+	
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
@@ -29,6 +33,4 @@ public class MapPanel extends JPanel {
 		gfx2d.setColor(new Color(0,191,255));
 		gfx2d.fill(new Rectangle(0, 0, (int)output.getPanelSize().getWidth(), (int)output.getPanelSize().getHeight()));	
 	}
-	private Output output;
-	private static final long serialVersionUID = 1L;
 }

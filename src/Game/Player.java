@@ -24,6 +24,7 @@ public class Player implements Main.Player{
 	private boolean initialreinforcement;
 	private boolean lost = false;
 	private ArrayList<Card> hand;
+	
 	public Player(GameMechanics gamemechanics, boolean human){
 		this.gamemechanics = gamemechanics;
 		this.human = human;
@@ -37,6 +38,7 @@ public class Player implements Main.Player{
 		this.initialreinforcement = true;
 		this.hand = new ArrayList<Card>();
 	}
+	
 	public void setPlayerName(Integer playernumber) {
 		if (human){
 			playerNumber = playernumber;
@@ -66,18 +68,23 @@ public class Player implements Main.Player{
 	public int getPlayerNumber() {
 		return this.playerNumber;
 	}
+	
 	public boolean getHuman(){
 		return this.human;
 	}
+	
 	public void setAvailableArmies(Integer availablearmies){
 		this.availablearmies = availablearmies;
 	}
+	
 	public Integer getAvailableArmies(){
 		return availablearmies;
 	}
+	
 	public void addPlacedArmies(Army army){
 		this.placedarmies.add(army);
 	}
+	
 	public void removePlacedArmy(Army armytoremove){
 		for (int i = 0; i < placedarmies.size(); i++){
 			if (placedarmies.get(i).getCountry().getName().equals(armytoremove.getCountry().getName())){
@@ -86,27 +93,35 @@ public class Player implements Main.Player{
 			}
 		}
 	}
+	
 	public ArrayList<Army> getPlacedArmies(){
 		return this.placedarmies;
 	}
+	
 	public Integer getNumOccupiedCountry(){
 		return this.placedarmies.size();
 	}
+	
 	public void setInitial(boolean bool){
 		this.initialreinforcement = bool;
 	}
+	
 	public boolean getInitial(){
 		return initialreinforcement;
 	}
+	
 	public boolean getLost(){
 		return lost;
 	}
+	
 	public void setLost(boolean lost){
 		this.lost = lost;
 	}
+	
 	public ArrayList<Card> getHand(){
 		return this.hand;
 	}
+	
 	public void addCardToHand(Card card){
 		this.hand.add(card);
 	}

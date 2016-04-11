@@ -16,6 +16,7 @@ import Game.GameMechanics;
 import Game.Player;
 
 public class PlayGame {
+	
 	public static void main(String args[]){ 
 		GameMechanics gamemechanics = new GameMechanics();
 		gamemechanics.setInput(new Input(gamemechanics));

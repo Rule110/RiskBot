@@ -13,12 +13,14 @@ public class Continent {
 	private Integer id;
 	private String name;
 	private Integer value;
+	
 	Continent(Integer id){
 		this.id = id;
 		this.name = MapConstants.CONTINENT_NAMES[id];
 		this.value = MapConstants.CONTINENT_VALUES[id];
 		this.countriesincontinent = new ArrayList<Country>();
 	}
+	
 	void setCountriesInContinent(ArrayList<Country> countrylist){
 		for (int i = 0; i < MapConstants.CONTINENT_IDS.length; i++){
 			if (MapConstants.CONTINENT_IDS[i] == id){
@@ -26,15 +28,19 @@ public class Continent {
 			}
 		}
 	}
+	
 	public Integer getID(){
 		return id;
 	}
+	
 	String getName(){
 		return name;
 	}
+	
 	Integer getValue(){
 		return value;
 	}
+	
 	ArrayList<Country> getCountriesInContinent(){
 		return countriesincontinent;
 	}

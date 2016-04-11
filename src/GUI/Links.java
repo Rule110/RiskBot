@@ -20,6 +20,9 @@ import javax.swing.JComponent;
 import Game.Country;
 
 public class Links extends JComponent{
+	private Output output;
+	private static final long serialVersionUID = 1L;
+	
 	public Links(Output output){
 		this.output = output;
 		this.setPreferredSize(output.getPanelSize());
@@ -27,12 +30,14 @@ public class Links extends JComponent{
 		output.setCountries(new Countries(output));
 		this.add(output.getCountries());
 	}
+	
 	@Override
 	public void paintComponent(Graphics g){
 		//Draw the Links with 2D graphics
 		this.drawLinks(this.initialiseGFX2D(g));
 		
 	}
+	
 	private Graphics2D initialiseGFX2D(Graphics g){	
 		super.paintComponent(g);
 		Graphics2D gfx2d = (Graphics2D)g;
@@ -41,6 +46,7 @@ public class Links extends JComponent{
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		return gfx2d;
 	}
+	
 	private void drawLinks(Graphics2D gfx2d){
 		for (Country country : output.getCountryList()){
 			for (Country othercountry : country.getAdjacentCountries()){
@@ -50,6 +56,7 @@ public class Links extends JComponent{
 			}
 		}
 	}
+	
 	private void drawLink(Graphics2D gfx2d, Country country, Country othercountry){
 		Integer x = country.getXCoords();
 		Integer	y = country.getYCoords();
@@ -87,6 +94,7 @@ public class Links extends JComponent{
 		gfx2d.setPaint(new Color(127,255,212));
 		gfx2d.draw(new Line2D.Double(x - (stroke*4), y, otherx - (stroke*4), othery));
 	}
+	
 	private Color determineColor(Country country, Country othercountry){
 		Color c = null;
 		//Same continent?
@@ -99,6 +107,4 @@ public class Links extends JComponent{
 		}
 		return c;
 	}
-	private Output output;
-	private static final long serialVersionUID = 1L;
 }

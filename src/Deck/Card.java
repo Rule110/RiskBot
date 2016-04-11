@@ -28,7 +28,14 @@ public class Card {
 					break;
 		default:	insignia_str = "Error";
 					break;
-	}
-		return this.territory.getName() + " ; " + insignia_str;
+		}
+		String cardname = "";
+		if (this.territory != null){
+			cardname = this.territory.getName();
+		}
+		else {
+			cardname = "Wild Card";
+		}
+		return  cardname + " ; " + insignia_str;
 	}
 }

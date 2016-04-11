@@ -13,6 +13,7 @@ public class Fortify {
 	Fortify(GameMechanics gamemechanics){
 		this.gamemechanics = gamemechanics;
 	}
+	
 	void setFortify(Player player){
 		Army fortifyfrom = null;
 		while (fortifyfrom == null) {
@@ -24,6 +25,7 @@ public class Fortify {
 		}
 		this.fortifyDestinationCheck(fortifyfrom);
 	}
+	
 	private Army placedMatches(Player player, String attackfrom){
 		Army fortifyfrom = null;
 		boolean found = false;
@@ -55,6 +57,7 @@ public class Fortify {
 		}
 		return fortifyfrom;
 	}
+	
 	private void fortifyDestinationCheck(Army fortifyfrom){
 		Player player = fortifyfrom.getPlayer();
 		String fortifyto_substr = null;
@@ -103,6 +106,7 @@ public class Fortify {
 			}
 		}
 	}
+	
 	private ArrayList<Army> getAdjacentOwned(Army fortifyfrom, ArrayList<Army> alreadychecked){
 		ArrayList<Country> adjacentcountries = fortifyfrom.getCountry().getAdjacentCountries();
 		ArrayList<Army> adjacentownedarmies = new ArrayList<Army>();
@@ -116,6 +120,7 @@ public class Fortify {
 		}
 		return adjacentownedarmies;		 
 	}
+	
 	private boolean AlreadyChecked(Army checkthisarmy, ArrayList<Army> alreadychecked){
 		boolean found = false;
 		for (Army army : alreadychecked){
@@ -125,6 +130,7 @@ public class Fortify {
 		}
 		return found;
 	}
+	
 	private boolean checkContiguous(ArrayList<Army> adjacentownedarmies, Army fortifyto, ArrayList<Army> alreadychecked){
 		boolean contiguityfound = false;
 		for (Army ownedarmy : adjacentownedarmies){
@@ -153,6 +159,7 @@ public class Fortify {
 			return contiguityfound;
 		}
 	}
+	
 	private Integer getFortifySize(Player player, Army fortifyfrom, Army fortifyto){
 		Integer fortifysize = null;
 		boolean loop = true;
@@ -187,6 +194,7 @@ public class Fortify {
 		} while (loop);
 		return fortifysize;
 	}
+	
 	private boolean isNotAnInteger(String str){
 		try{
 			Integer.parseInt(str);
@@ -196,6 +204,7 @@ public class Fortify {
 			return true;
 		}
 	}
+	
 	private void fortify(Army fortifyfrom, Army fortifyto, Integer fortifysize){
 		Player player = fortifyfrom.getPlayer();
 		Country from = fortifyfrom.getCountry();

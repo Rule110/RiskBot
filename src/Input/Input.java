@@ -15,6 +15,10 @@ import Game.GameMechanics;
 import java.util.Stack;
 
 public class Input implements Main.Input {
+	private JTextField inputField;
+	private Stack<String> inputBuffer;
+	private Stack<String> inputHistory; 
+	private GameMechanics gamemechanics;
 	
 	public Input(GameMechanics gamemechanics) {
 		inputField = gamemechanics.getInputField();
@@ -24,6 +28,7 @@ public class Input implements Main.Input {
 		inputField.addActionListener(new TextActionListener(this));
 		this.gamemechanics = gamemechanics;
 	}
+	
 	//takes user input as argument and adds it to the stack "inputBuffer"
 	public void addInputToBuffer(String input) {
 		inputBuffer.add(input);
@@ -34,10 +39,12 @@ public class Input implements Main.Input {
 	public Stack<String> getInputBuffer() {
 		return inputBuffer;
 	}
+	
 	//used to make TextField accessible from Listener class.
 	public JTextField getTextField(){
 		return this.inputField;
 	}
+	
 	// Method used to get input command from the user.
 	public String getInputCommand() {
 		synchronized (inputBuffer) {
@@ -52,8 +59,4 @@ public class Input implements Main.Input {
 		}
 		return inputBuffer.pop();
 	}
-	private JTextField inputField;
-	private Stack<String> inputBuffer;
-	private Stack<String> inputHistory; 
-	private GameMechanics gamemechanics;
 }

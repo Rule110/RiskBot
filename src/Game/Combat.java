@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import Deck.Card;
 public class Combat {
 	private GameMechanics gamemechanics;
+	
 	Combat(GameMechanics gamemechanics){
 		this.gamemechanics = gamemechanics;
 	}
+	
 	void setCombat(Player attacker){
 		Army assaultforce = null, defenceforce = null;
 		while (assaultforce == null) {
@@ -44,6 +46,7 @@ public class Combat {
 		}
 		beginInvasion(assaultforce, assaultsize, defenceforce, defencesize);
 	}
+	
 	private Army placedMatches(Player player, String attackfrom){
 		Army match = null;
 		boolean found = false;
@@ -75,6 +78,7 @@ public class Combat {
 		}
 		return match;
 	}
+	
 	private Army adjacentMatches(Army army, String attackto){
 		Army match = null;
 		boolean found = false;
@@ -104,6 +108,7 @@ public class Combat {
 		}
 		return match;
 	}
+	
 	private Integer getAssaultSize(Player attacker, Army assaultforce){
 		Integer assaultsize = null;
 		boolean loop = true;
@@ -131,6 +136,7 @@ public class Combat {
 		} while (loop);
 		return assaultsize;
 	}
+	
 	private Integer getDefenceSize(Player defender, Army defenceforce){
 		Integer defencesize = null;
 		boolean loop = true;
@@ -158,6 +164,7 @@ public class Combat {
 		} while (loop);
 		return defencesize;
 	}
+	
 	private boolean isNotAnInteger(String str){
 		try{
 			Integer.parseInt(str);
@@ -167,6 +174,7 @@ public class Combat {
 			return true;
 		}
 	}
+	
 	private void beginInvasion(Army assaultforce, Integer assaultsize, Army defenceforce, Integer defencesize){
 		boolean loop = true, conqueredatleastone = false;
 		Player attacker = assaultforce.getPlayer();
@@ -256,6 +264,7 @@ public class Combat {
 			attacker.addCardToHand(card);
 		}
 	}
+	
 	private Integer max(ArrayList<Integer> rolls){
 		int max = 0;
 		for (int i = 0; i < rolls.size(); i++){
