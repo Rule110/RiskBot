@@ -13,7 +13,6 @@ public class nullptr implements Bot {
 	nullptr (BoardAPI inBoard, PlayerAPI inPlayer) {
 		board = inBoard;
 		player = inPlayer;
-		enemyterritories = new ArrayList<Integer>();
 		return;
 	}
 	
@@ -27,16 +26,23 @@ public class nullptr implements Bot {
 		this.phase = 0;
 		String command = "";
 		Strategy strategy = new Strategy();
-		Territory territory = strategy.reinforcepriority.remove(0);
-		command = territory.countryname;
+		if (strategy.reinforcepriority.size() == 0){
+			command = GameData.COUNTRY_NAMES[(int)(Math.random() * GameData.NUM_COUNTRIES)];
+			command = command.replaceAll("\\s", "");
+		}
+		else {
+			Territory territory = strategy.reinforcepriority.remove(0);
+			command = territory.countryname;
+		}
 		command += " 1";
 		return(command);
 	}
 	
 	public String getPlacement (int forPlayer) {
 		String command = "";
+		ArrayList<Integer> enemyterritories = new ArrayList<Integer>();
 		for (int i = 0; i < GameData.NUM_COUNTRIES; i++){
-			if (board.getOccupier(i) < 3 && board.getOccupier(i) != player.getId()){
+			if (board.getOccupier(i) < GameData.NUM_PLAYERS && board.getOccupier(i) != player.getId()){
 				boolean bordering = false;
 				int j = 0;
 				while (j > GameData.ADJACENT[i].length && !bordering){
@@ -165,9 +171,9 @@ public class nullptr implements Bot {
 				do {
 					fortifyfrom = strategy.fortifypriority.get(j++);
 
-				} while (!board.isConnected(fortifyfrom.countryid, fortifyto.countryid) && j < strategy.fortifypriority.size());
+				} while ((!board.isConnected(fortifyfrom.countryid, fortifyto.countryid) || fortifyfrom.countryid == fortifyto.countryid) && j < strategy.fortifypriority.size());
 			} while (i < strategy.reinforcepriority.size());
-			if (board.isConnected(fortifyfrom.countryid, fortifyto.countryid)){
+			if (board.isConnected(fortifyfrom.countryid, fortifyto.countryid) && fortifyfrom.countryid != fortifyto.countryid){
 				Integer amount = fortifyfrom.force - 1;
 				command = fortifyfrom.countryname +" "+ fortifyto.countryname +" "+ amount;
 			}
@@ -182,7 +188,6 @@ public class nullptr implements Bot {
 	}
 	
 	// Custom code
-	private ArrayList<Integer> enemyterritories;
 	private Integer phase = 0;
 	private class Territory implements Comparable<Territory>{
 		private Integer countryid;
@@ -195,6 +200,7 @@ public class nullptr implements Bot {
 		private Double bestattack;
 		private Front attackchoice;
 		private boolean continentbridge;
+		private boolean priority;
 		public Territory(int incountryid){
 			this.fronts = new ArrayList<Front>();
 			this.countryid = incountryid;
@@ -216,9 +222,11 @@ public class nullptr implements Bot {
 				}
 			}
 			this.defenceneed = 0;
+			this.priority = false;
 			for (Front front: this.fronts){
-				if (front.oponentid < 3){
-					this.defenceneed += front.opposingforce - this.force;
+				this.defenceneed += (int)((front.opposingforce * 3.0 / 2.0) - this.force);
+				if (front.oponentid < GameData.NUM_PLAYERS){
+					this.priority = true;
 				}
 			}
 			this.bestattack = 0.0;
@@ -227,6 +235,13 @@ public class nullptr implements Bot {
 				if (attackcandidate > (3.0 / 2.0) && attackcandidate > this.bestattack && this.force > 3){
 					this.bestattack = attackcandidate;
 					this.attackchoice = front;
+				}
+				else {
+					Integer enemydefenceneed = assessEnemyDefenceNeed(front.adjacentid);
+					if (enemydefenceneed > 0 && attackcandidate > 0.8 && this.force > 3){
+						this.bestattack = ((double) this.force + enemydefenceneed) / ((double) front.opposingforce);
+						this.attackchoice = front;
+					}
 				}
 			}
 			this.fortifyavailable = 0;
@@ -240,13 +255,31 @@ public class nullptr implements Bot {
 				if (GameData.CONTINENT_VALUES[this.continentid] < GameData.CONTINENT_VALUES[other.continentid] && this.defenceneed > 0){
 					comparison = -1;
 				}
+				else if (GameData.CONTINENT_VALUES[this.continentid] < GameData.CONTINENT_VALUES[other.continentid] && this.defenceneed <= 0){
+					comparison = 1;
+				}
 				else if (GameData.CONTINENT_VALUES[this.continentid] > GameData.CONTINENT_VALUES[other.continentid] && other.defenceneed > 0){
 					comparison = 1;
 				}
-				else if (this.continentbridge && this.defenceneed > 0){
+				else if (GameData.CONTINENT_VALUES[this.continentid] > GameData.CONTINENT_VALUES[other.continentid] && other.defenceneed <= 0){
 					comparison = -1;
 				}
-				else if (other.continentbridge && other.defenceneed > 0){
+				else if (this.continentbridge && !other.continentbridge && this.defenceneed > 0){
+					comparison = -1;
+				}
+				else if (this.continentbridge && !other.continentbridge && this.defenceneed <= 0){
+					comparison = 1;
+				}
+				else if (other.continentbridge && !this.continentbridge && this.defenceneed > 0){
+					comparison = 1;
+				}
+				else if (other.continentbridge && !this.continentbridge && this.defenceneed <= 0){
+					comparison = -1;
+				}
+				else if (this.priority && !other.priority){
+					comparison = -1;
+				}
+				else if (!this.priority && other.priority){
 					comparison = 1;
 				}
 				else {
@@ -269,6 +302,24 @@ public class nullptr implements Bot {
 			}
 			return comparison;
 		}
+		private Integer assessEnemyDefenceNeed(Integer enemyterritoryid){
+			Integer enemydefenceneed = 0;
+			ArrayList<Front> enemyfronts = new ArrayList<Front>();
+			for (int i = 0; i < GameData.ADJACENT[this.countryid].length; i++){
+				Integer adjacentid = GameData.ADJACENT[this.countryid][i];
+				if (board.getOccupier(adjacentid) != board.getOccupier(enemyterritoryid)){
+					enemyfronts.add(new Front(adjacentid));
+				}
+			}
+			Integer cumulativeopponents = 0;
+			for (Front front: enemyfronts){
+				if (front.oponentid < GameData.NUM_PLAYERS){
+					cumulativeopponents += front.opposingforce;
+				}
+			}
+			enemydefenceneed += cumulativeopponents - board.getNumUnits(enemyterritoryid);
+			return enemydefenceneed;
+		}
 	}
 	private class Front {
 		private Integer adjacentid;
@@ -289,7 +340,6 @@ public class nullptr implements Bot {
 		private ArrayList<Territory> fortifypriority;
 		private ArrayList<Territory> bestattacks;
 		public Strategy(){
-			enemyterritories.clear();
 			this.myterritories = new ArrayList<Territory>();
 			for (int i = 0; i < GameData.NUM_COUNTRIES; i++){
 				if (board.getOccupier(i) == player.getId()){
@@ -300,7 +350,9 @@ public class nullptr implements Bot {
 			this.fortifypriority = new ArrayList<Territory>();
 			this.bestattacks = new ArrayList<Territory>();
 			for (Territory territory : myterritories){
-				this.reinforcepriority.add(territory);
+				if (territory.defenceneed != 0){
+					this.reinforcepriority.add(territory);
+				}
 				if (territory.fortifyavailable > 0){
 					this.fortifypriority.add(territory);
 				}
@@ -313,5 +365,4 @@ public class nullptr implements Bot {
 			Collections.sort(this.bestattacks);
 		}
 	}
-	
 }

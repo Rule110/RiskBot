@@ -1,9 +1,10 @@
 // Teamname: nullptr
 // Student Number: 14745991
-// Description: Automated test script
+// Description: Automated test script for nullptr versus TestBot2
+
 import java.util.ArrayList;
 
-public class Testmain {
+public class Testmain2 {
 	
 	public static void main (String args[]) {	   
 		Board board = new Board();
@@ -25,8 +26,8 @@ public class Testmain {
 				players[playerId].setBot(new nullptr(board,players[playerId]));
 			}
 			else if (playerId == 1){
-				players[playerId].setBot(new TestBot1(board,players[playerId]));
-				//players[playerId].setBot(new TestBot2(board,players[playerId]));
+				//players[playerId].setBot(new TestBot1(board,players[playerId]));
+				players[playerId].setBot(new TestBot2(board,players[playerId]));
 			}
 			if (playerId < GameData.NUM_PLAYERS) {
 				name = ui.inputName(players[playerId]);

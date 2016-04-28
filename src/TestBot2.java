@@ -1,6 +1,6 @@
 // Teamname: nullptr
 // Student Number: 14745991
-// Description: TestBot2 simulates random behaviour
+// Description: This Bot simulates random behaviour.
 
 import java.util.ArrayList;
 
@@ -22,24 +22,26 @@ public class TestBot2 implements Bot {
 	}
 
 	public String getReinforcement () {
-		System.out.println("1");
+		System.out.println("test2reinforce:");
 		String command = "";
 		command = GameData.COUNTRY_NAMES[(int)(Math.random() * GameData.NUM_COUNTRIES)];
 		command = command.replaceAll("\\s", "");
 		command += " 1";
+		System.out.println(command);
 		return(command);
 	}
 	
 	public String getPlacement (int forPlayer) {
-		System.out.println("test2placement");
+		System.out.println("test2placement:");
 		String command = "";
 		command = GameData.COUNTRY_NAMES[(int)(Math.random() * GameData.NUM_COUNTRIES)];
 		command = command.replaceAll("\\s", "");
+		System.out.println(command);
 		return(command);
 	}
 	
 	public String getCardExchange () {
-		System.out.println("test2exchange");
+		System.out.println("test2exchange:");
 		String command = "";
 		if (player.isForcedExchange()){
 			ArrayList<Card> cards = player.getCards();
@@ -79,55 +81,63 @@ public class TestBot2 implements Bot {
 		else {
 			command = "skip";
 		}
+		System.out.println(command);
 		return(command);
 	}
 
 	public String getBattle () {
-		System.out.println("test2battle");
+		System.out.println("test2battle:");
 		String command = "";
 		String attackfrom = "";
-		ArrayList<Integer> owned = new ArrayList<Integer>();
-		for (int i = 0; i < GameData.NUM_COUNTRIES; i++){
-			if (board.getOccupier(i) == player.getId()){
-				owned.add(i);
+		Integer attack = (int)(Math.random() * 2);
+		if (attack > 1){
+			ArrayList<Integer> owned = new ArrayList<Integer>();
+			for (int i = 0; i < GameData.NUM_COUNTRIES; i++){
+				if (board.getOccupier(i) == player.getId()){
+					owned.add(i);
+				}
 			}
-		}
-		ArrayList<Integer> enemies = new ArrayList<Integer>();
-		Integer j;
-		do {
-			j = (int) (Math.random() * owned.size());
-		} while (board.getNumUnits(j) < 2);
-		
-		attackfrom = GameData.COUNTRY_NAMES[j];
-		int[] adjacent = GameData.ADJACENT[j];
-		for (int i = 0; i < adjacent.length; i++){
-			if (board.getOccupier(adjacent[i]) != player.getId()){
-				enemies.add(adjacent[i]);
+			ArrayList<Integer> enemies = new ArrayList<Integer>();
+			Integer j;
+			do {
+				j = (int) (Math.random() * owned.size());
+			} while (board.getNumUnits(j) < 2);
+			
+			attackfrom = GameData.COUNTRY_NAMES[j];
+			int[] adjacent = GameData.ADJACENT[j];
+			for (int i = 0; i < adjacent.length; i++){
+				if (board.getOccupier(adjacent[i]) != player.getId()){
+					enemies.add(adjacent[i]);
+				}
 			}
-		}
-		if (enemies.size() > 0){
-			Integer k = (int) (Math.random() * adjacent.length);
-			String attackto = GameData.COUNTRY_NAMES[adjacent[k]];
-			Integer amount;
-			if (board.getNumUnits(j) == 2){
-				amount = 1;
-			}
-			else if (board.getNumUnits(j) == 3){
-				amount = 2;
+			if (enemies.size() > 0){
+				Integer k = (int) (Math.random() * adjacent.length);
+				String attackto = GameData.COUNTRY_NAMES[adjacent[k]];
+				Integer amount;
+				if (board.getNumUnits(j) == 2){
+					amount = 1;
+				}
+				else if (board.getNumUnits(j) == 3){
+					amount = 2;
+				}
+				else {
+					amount = 3;
+				}
+				command = attackfrom +" "+ attackto +" "+ amount;
 			}
 			else {
-				amount = 3;
+				command = "skip";
 			}
-			command = attackfrom +" "+ attackto +" "+ amount;
 		}
 		else {
 			command = "skip";
 		}
+		System.out.println(command);
 		return(command);
 	}
 
 	public String getDefence (int countryId) {
-		System.out.println("5");
+		System.out.println("test2defence:");
 		String command = "";
 		if (board.getNumUnits(countryId) < 2){
 			command = "1";
@@ -135,24 +145,24 @@ public class TestBot2 implements Bot {
 		else {
 			command = "2";
 		}
+		System.out.println(command);
 		return(command);
 	}
 
 	public String getMoveIn (int attackCountryId) {
-		System.out.println("6");
+		System.out.println("test2movein:");
 		String command = "";
-		// put your code here
 		command = "0";
+		System.out.println(command);
 		return(command);
 	}
 
 	public String getFortify () {
-		System.out.println("7");
+		System.out.println("test2fortify:");
 		String command = "";
 		// put code here
 		command = "skip";
+		System.out.println(command);
 		return(command);
 	}
-
 }
-
